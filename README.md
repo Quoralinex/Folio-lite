@@ -17,7 +17,7 @@ A multi-profile staff directory built on the Folio-lite template. Profiles are r
 3. Place new brand-approved imagery in `assets/images/` and reference it from the JSON.
 
 ## Cloudflare Pages checklist
-- **Routing:** The query parameter `?employee=<slug>` resolves profiles; lightweight HTML stubs are provided for direct paths (e.g., `/alicejones.html`).
+- **Routing:** The query parameter `?employee=<slug>` resolves profiles; lightweight HTML stubs are provided for direct paths (e.g., `/alicejones.html`). If you prefer extensionless URLs, deploy with the `_redirects` file (e.g., `/alicejones` → `/index.html?employee=alicejones`).
 - **Caching:** `_headers` applies `Cache-Control: public, max-age=31536000, immutable` to `/assets/*`.
 - **Optimization:** In Pages → Speed → Optimization, enable HTML/CSS/JS minification.
 - **Analytics:** Enable Cloudflare Web Analytics in the Pages project for traffic insights.
