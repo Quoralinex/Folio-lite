@@ -102,9 +102,11 @@ const renderSidebar = (employee) => {
 
 const renderSocials = (employee) => {
   const socialLinks = qsa('[data-social-link]');
+  const socials = employee.socials || {};
+
   socialLinks.forEach((link) => {
     const key = link.dataset.socialLink;
-    const href = employee.socials?.[key];
+    const href = socials[key];
     if (href) {
       link.href = href;
       link.parentElement.style.display = 'block';
@@ -441,7 +443,16 @@ const renderProfile = (employee) => {
   renderSidebar(employee);
   renderContact(employee);
   renderSocials(employee);
-  renderParagraphs(qs('#about-text'), [employee.about?.intro || '', employee.about?.detail || ''].filter(Boolean));
+
+  const aboutParts = [];
+  if (employee.about && employee.about.intro) {
+    aboutParts.push(employee.about.intro);
+  }
+  if (employee.about && employee.about.detail) {
+    aboutParts.push(employee.about.detail);
+  }
+  renderParagraphs(qs('#about-text'), aboutParts);
+
   renderServices(employee);
   renderTestimonials(employee);
   renderClients(employee);
@@ -517,4 +528,3 @@ const loadDirectory = async () => {
 };
 
 loadDirectory();
-
