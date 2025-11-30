@@ -42,15 +42,16 @@ const formBtn = qs('[data-form-btn]');
 
 formInputs.forEach((input) => {
   input.addEventListener('input', function () {
-    if (form && form.checkValidity()) {
+    if (form && form.checkValidity() && formBtn) {
       formBtn.removeAttribute('disabled');
-    } else {
+    } else if (formBtn) {
       formBtn.setAttribute('disabled', '');
     }
   });
 });
 
-const buildMapSrc = (location) => `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+const buildMapSrc = (location) =>
+  'https://www.google.com/maps?q=' + encodeURIComponent(location) + '&output=embed';
 
 const renderContact = (employee) => {
   const email = qs('[data-email]');
@@ -61,16 +62,20 @@ const renderContact = (employee) => {
 
   if (email) {
     email.textContent = employee.email;
-    email.href = `mailto:${employee.email}`;
+    email.href = 'mailto:' + employee.email;
   }
 
   if (phone) {
     phone.textContent = employee.phone;
-    phone.href = `tel:${employee.phone.replace(/[^\d+]/g, '')}`;
+    phone.href = 'tel:' + employee.phone.replace(/[^\d+]/g, '');
   }
 
   if (birthday) {
-    birthday.textContent = new Date(employee.birthday).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+    birthday.textContent = new Date(employee.birthday).toLocaleDateString(undefined, {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
     birthday.setAttribute('datetime', employee.birthday);
   }
 
@@ -93,11 +98,11 @@ const renderSidebar = (employee) => {
   if (roleEl) roleEl.textContent = employee.role;
   if (avatarEl) {
     avatarEl.src = employee.avatar;
-    avatarEl.alt = `${employee.name} avatar`;
+    avatarEl.alt = employee.name + ' avatar';
   }
-  if (aboutTitle) aboutTitle.textContent = `About ${employee.name}`;
+  if (aboutTitle) aboutTitle.textContent = 'About ' + employee.name;
 
-  document.title = `${employee.name} | Quoralinex People`;
+  document.title = employee.name + ' | Quoralinex People';
 };
 
 const renderSocials = (employee) => {
@@ -135,15 +140,22 @@ const renderServices = (employee) => {
   (employee.services || []).forEach((service) => {
     const li = document.createElement('li');
     li.className = 'service-item';
-    li.innerHTML = `
-      <div class="service-icon-box">
-        <img src="${service.icon}" alt="${service.title} icon" width="40">
-      </div>
-      <div class="service-content-box">
-        <h4 class="h4 service-item-title">${service.title}</h4>
-        <p class="service-item-text">${service.description}</p>
-      </div>
-    `;
+    li.innerHTML =
+      '<div class="service-icon-box">' +
+      '<img src="' +
+      service.icon +
+      '" alt="' +
+      service.title +
+      ' icon" width="40">' +
+      '</div>' +
+      '<div class="service-content-box">' +
+      '<h4 class="h4 service-item-title">' +
+      service.title +
+      '</h4>' +
+      '<p class="service-item-text">' +
+      service.description +
+      '</p>' +
+      '</div>';
     serviceList.appendChild(li);
   });
 };
@@ -170,8 +182,18 @@ const bindTestimonialModal = () => {
     });
   });
 
-  if (modalCloseBtn) modalCloseBtn.addEventListener('click', () => { elementToggleFunc(modalContainer); elementToggleFunc(overlay); });
-  if (overlay) overlay.addEventListener('click', () => { elementToggleFunc(modalContainer); elementToggleFunc(overlay); });
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', function () {
+      elementToggleFunc(modalContainer);
+      elementToggleFunc(overlay);
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener('click', function () {
+      elementToggleFunc(modalContainer);
+      elementToggleFunc(overlay);
+    });
+  }
 };
 
 const renderTestimonials = (employee) => {
@@ -190,18 +212,29 @@ const renderTestimonials = (employee) => {
   employee.testimonials.forEach((testimonial) => {
     const li = document.createElement('li');
     li.className = 'testimonials-item';
-    li.innerHTML = `
-      <div class="content-card" data-testimonials-item data-testimonial-date="${testimonial.date || ''}">
-        <figure class="testimonials-avatar-box">
-          <img src="${testimonial.avatar}" alt="${testimonial.name}" width="60" data-testimonials-avatar>
-        </figure>
-        <h4 class="h4 testimonials-item-title" data-testimonials-title>${testimonial.name}</h4>
-        <div class="testimonials-text" data-testimonials-text>
-          <p>${testimonial.quote}</p>
-          <p class="section-sub">${testimonial.role}</p>
-        </div>
-      </div>
-    `;
+    li.innerHTML =
+      '<div class="content-card" data-testimonials-item data-testimonial-date="' +
+      (testimonial.date || '') +
+      '">' +
+      '<figure class="testimonials-avatar-box">' +
+      '<img src="' +
+      testimonial.avatar +
+      '" alt="' +
+      testimonial.name +
+      '" width="60" data-testimonials-avatar>' +
+      '</figure>' +
+      '<h4 class="h4 testimonials-item-title" data-testimonials-title>' +
+      testimonial.name +
+      '</h4>' +
+      '<div class="testimonials-text" data-testimonials-text>' +
+      '<p>' +
+      testimonial.quote +
+      '</p>' +
+      '<p class="section-sub">' +
+      testimonial.role +
+      '</p>' +
+      '</div>' +
+      '</div>';
     list.appendChild(li);
   });
 
@@ -232,11 +265,16 @@ const renderClients = (employee) => {
   employee.clients.forEach((client) => {
     const li = document.createElement('li');
     li.className = 'clients-item';
-    li.innerHTML = `
-      <a href="${client.url}" target="_blank" rel="noreferrer">
-        <img src="${client.logo}" alt="${client.name} logo">
-      </a>
-    `;
+    li.innerHTML =
+      '<a href="' +
+      client.url +
+      '" target="_blank" rel="noreferrer">' +
+      '<img src="' +
+      client.logo +
+      '" alt="' +
+      client.name +
+      ' logo">' +
+      '</a>';
     list.appendChild(li);
   });
 };
@@ -257,12 +295,19 @@ const renderTimeline = (items, containerId) => {
   items.forEach((item) => {
     const li = document.createElement('li');
     li.className = 'timeline-item';
-    li.innerHTML = `
-      <h4 class="h4 timeline-item-title">${item.title}</h4>
-      <span>${item.place || ''}</span>
-      <span class="section-sub">${item.period || ''}</span>
-      <p class="timeline-text">${item.body || ''}</p>
-    `;
+    li.innerHTML =
+      '<h4 class="h4 timeline-item-title">' +
+      item.title +
+      '</h4>' +
+      '<span>' +
+      (item.place || '') +
+      '</span>' +
+      '<span class="section-sub">' +
+      (item.period || '') +
+      '</span>' +
+      '<p class="timeline-text">' +
+      (item.body || '') +
+      '</p>';
     container.appendChild(li);
   });
 };
@@ -275,15 +320,22 @@ const renderSkills = (employee) => {
   (employee.skills || []).forEach((skill) => {
     const li = document.createElement('li');
     li.className = 'skills-item';
-    li.innerHTML = `
-      <div class="title-wrapper">
-        <h5 class="h5">${skill.name}</h5>
-        <data value="${skill.level}">${skill.level}%</data>
-      </div>
-      <div class="skill-progress-bg">
-        <div class="skill-progress-fill" style="width: ${skill.level}%;"></div>
-      </div>
-    `;
+    li.innerHTML =
+      '<div class="title-wrapper">' +
+      '<h5 class="h5">' +
+      skill.name +
+      '</h5>' +
+      '<data value="' +
+      skill.level +
+      '">' +
+      skill.level +
+      '%</data>' +
+      '</div>' +
+      '<div class="skill-progress-bg">' +
+      '<div class="skill-progress-fill" style="width: ' +
+      skill.level +
+      '%;"></div>' +
+      '</div>';
     list.appendChild(li);
   });
 };
@@ -344,20 +396,34 @@ const renderPortfolio = (employee) => {
   selectList.innerHTML = '';
   projectList.innerHTML = '';
 
-  const categories = Array.from(new Set((employee.portfolio || []).map((p) => p.category.toLowerCase())));
-  const allCategories = ['all', ...categories];
+  const categories = Array.from(
+    new Set((employee.portfolio || []).map((p) => p.category.toLowerCase()))
+  );
+  const allCategories = ['all'].concat(categories);
 
   allCategories.forEach((category, index) => {
     const btn = document.createElement('li');
     btn.className = 'filter-item';
-    btn.innerHTML = `<button ${index === 0 ? 'class="active"' : ''} data-filter-btn>${category.replace(/\b\w/g, (c) => c.toUpperCase())}</button>`;
+    btn.innerHTML =
+      '<button ' +
+      (index === 0 ? 'class="active"' : '') +
+      ' data-filter-btn>' +
+      category.replace(/\b\w/g, function (c) {
+        return c.toUpperCase();
+      }) +
+      '</button>';
     filterList.appendChild(btn);
   });
 
   allCategories.forEach((category) => {
     const item = document.createElement('li');
     item.className = 'select-item';
-    item.innerHTML = `<button data-select-item>${category.replace(/\b\w/g, (c) => c.toUpperCase())}</button>`;
+    item.innerHTML =
+      '<button data-select-item>' +
+      category.replace(/\b\w/g, function (c) {
+        return c.toUpperCase();
+      }) +
+      '</button>';
     selectList.appendChild(item);
   });
 
@@ -366,17 +432,28 @@ const renderPortfolio = (employee) => {
     li.className = 'project-item active';
     li.dataset.filterItem = '';
     li.dataset.category = project.category.toLowerCase();
-    li.innerHTML = `
-      <a href="${project.url}" target="_blank" rel="noreferrer">
-        <figure class="project-img">
-          <div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>
-          <img src="${project.image}" alt="${project.title}" loading="lazy">
-        </figure>
-        <h3 class="project-title">${project.title}</h3>
-        <p class="project-category">${project.category}</p>
-        <p class="section-sub">${project.summary || ''}</p>
-      </a>
-    `;
+    li.innerHTML =
+      '<a href="' +
+      project.url +
+      '" target="_blank" rel="noreferrer">' +
+      '<figure class="project-img">' +
+      '<div class="project-item-icon-box"><ion-icon name="eye-outline"></ion-icon></div>' +
+      '<img src="' +
+      project.image +
+      '" alt="' +
+      project.title +
+      '" loading="lazy">' +
+      '</figure>' +
+      '<h3 class="project-title">' +
+      project.title +
+      '</h3>' +
+      '<p class="project-category">' +
+      project.category +
+      '</p>' +
+      '<p class="section-sub">' +
+      (project.summary || '') +
+      '</p>' +
+      '</a>';
     projectList.appendChild(li);
   });
 
@@ -403,20 +480,35 @@ const renderBlog = (employee) => {
   employee.blog.forEach((post) => {
     const li = document.createElement('li');
     li.className = 'blog-post-item';
-    li.innerHTML = `
-      <a href="${post.url}" target="_blank" rel="noreferrer">
-        <figure class="blog-banner-box"><img src="${post.image}" alt="${post.title}" loading="lazy"></figure>
-        <div class="blog-content">
-          <div class="blog-meta">
-            <p class="blog-category">${post.category}</p>
-            <span class="dot"></span>
-            <time datetime="${post.date}">${new Date(post.date).toLocaleDateString()}</time>
-          </div>
-          <h3 class="h3 blog-item-title">${post.title}</h3>
-          <p class="blog-text">${post.excerpt}</p>
-        </div>
-      </a>
-    `;
+    li.innerHTML =
+      '<a href="' +
+      post.url +
+      '" target="_blank" rel="noreferrer">' +
+      '<figure class="blog-banner-box"><img src="' +
+      post.image +
+      '" alt="' +
+      post.title +
+      '" loading="lazy"></figure>' +
+      '<div class="blog-content">' +
+      '<div class="blog-meta">' +
+      '<p class="blog-category">' +
+      post.category +
+      '</p>' +
+      '<span class="dot"></span>' +
+      '<time datetime="' +
+      post.date +
+      '">' +
+      new Date(post.date).toLocaleDateString() +
+      '</time>' +
+      '</div>' +
+      '<h3 class="h3 blog-item-title">' +
+      post.title +
+      '</h3>' +
+      '<p class="blog-text">' +
+      post.excerpt +
+      '</p>' +
+      '</div>' +
+      '</a>';
     blogList.appendChild(li);
   });
 };
@@ -428,13 +520,18 @@ const renderStaffDirectory = () => {
 
   state.employees.forEach((employee, index) => {
     const li = document.createElement('li');
-    li.className = `directory-item ${index === state.currentIndex ? 'active' : ''}`;
+    li.className = 'directory-item ' + (index === state.currentIndex ? 'active' : '');
     li.dataset.slug = employee.slug;
-    li.innerHTML = `
-      <p class="directory-name">${employee.name}</p>
-      <p class="directory-role">${employee.role}</p>
-    `;
-    li.addEventListener('click', () => setActiveEmployee(employee.slug, true));
+    li.innerHTML =
+      '<p class="directory-name">' +
+      employee.name +
+      '</p>' +
+      '<p class="directory-role">' +
+      employee.role +
+      '</p>';
+    li.addEventListener('click', function () {
+      setActiveEmployee(employee.slug, true);
+    });
     list.appendChild(li);
   });
 };
@@ -463,9 +560,46 @@ const renderProfile = (employee) => {
   renderBlog(employee);
 };
 
+/* --------- Querystring helpers (no URLSearchParams) ---------- */
+
+const getQueryParam = function (name) {
+  const query = window.location.search ? window.location.search.substring(1) : '';
+  if (!query) return null;
+  const pairs = query.split('&');
+  for (let i = 0; i < pairs.length; i += 1) {
+    const part = pairs[i];
+    if (!part) continue;
+    const eqIndex = part.indexOf('=');
+    const key = decodeURIComponent(eqIndex >= 0 ? part.substring(0, eqIndex) : part);
+    if (key === name) {
+      const value =
+        eqIndex >= 0 ? decodeURIComponent(part.substring(eqIndex + 1)) : '';
+      return value || null;
+    }
+  }
+  return null;
+};
+
+const buildUrlWithSlug = function (slug) {
+  const base = window.location.origin + window.location.pathname;
+  const query = window.location.search ? window.location.search.substring(1) : '';
+  const parts = query ? query.split('&').filter(Boolean) : [];
+
+  // remove any existing employee= param
+  for (let i = parts.length - 1; i >= 0; i -= 1) {
+    if (parts[i].split('=')[0] === 'employee') {
+      parts.splice(i, 1);
+    }
+  }
+  parts.push('employee=' + encodeURIComponent(slug));
+
+  return base + '?' + parts.join('&');
+};
+
+/* ------------------------------------------------------------ */
+
 const resolveSlug = () => {
-  const params = new URLSearchParams(window.location.search);
-  const querySlug = params.get('employee');
+  const querySlug = getQueryParam('employee');
   if (querySlug) return querySlug.toLowerCase();
 
   const path = window.location.pathname.split('/').pop();
@@ -485,9 +619,8 @@ const setActiveEmployee = (slug, manual = false) => {
   renderProfile(employee);
   renderStaffDirectory();
 
-  const url = new URL(window.location.href);
-  url.searchParams.set('employee', employee.slug);
-  window.history.replaceState({}, '', url);
+  const newUrl = buildUrlWithSlug(employee.slug);
+  window.history.replaceState({}, '', newUrl);
 
   if (manual) {
     restartRotation();
@@ -495,36 +628,44 @@ const setActiveEmployee = (slug, manual = false) => {
 };
 
 const nextEmployee = () => {
+  if (!state.employees.length) return;
   const nextIndex = (state.currentIndex + 1) % state.employees.length;
   setActiveEmployee(state.employees[nextIndex].slug, false);
 };
 
 const restartRotation = () => {
   if (state.autoTimer) clearInterval(state.autoTimer);
+  if (!state.employees.length) return;
   state.autoTimer = setInterval(nextEmployee, state.rotationMs);
 };
 
-const loadDirectory = async () => {
-  try {
-    // Use an explicit relative path and disable caching
-    const response = await fetch('./assets/data/employees.json', {
-      cache: 'no-store'
-    });
+/* --------- Directory load using XHR (no fetch) --------------- */
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+const loadDirectory = () => {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', './assets/data/employees.json', true);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState !== 4) return;
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        state.employees = (data && data.staff) || [];
+      } catch (e) {
+        console.error('Failed to parse employee directory', e);
+        state.employees = [];
+      }
+    } else {
+      console.error('Failed to load employee directory HTTP ' + xhr.status);
+      state.employees = [];
     }
 
-    const data = await response.json();
-    state.employees = data.staff || [];
-  } catch (error) {
-    console.error('Failed to load employee directory', error);
-    state.employees = [];
-  }
+    setActiveEmployee(resolveSlug());
+    restartRotation();
+  };
 
-  // Always attempt to render, even if we had to fall back
-  setActiveEmployee(resolveSlug());
-  restartRotation();
+  xhr.send();
 };
 
 loadDirectory();
