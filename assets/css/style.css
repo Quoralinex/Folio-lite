@@ -196,6 +196,53 @@ article {
   margin-top: 4px;
 }
 
+.status-banner,
+.directory-status {
+  display: none;
+  background: var(--raisin-black);
+  border: 1px solid var(--jet);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--light-gray);
+  font-size: var(--fs-7);
+  margin: 0 0 12px;
+}
+
+.status-banner.is-visible,
+.directory-status.is-visible {
+  display: block;
+}
+
+.status-banner.is-error,
+.directory-status.is-error {
+  border-color: var(--orange-yellow-crayola);
+  color: var(--white-1);
+}
+
+.status-banner.is-info,
+.directory-status.is-info {
+  color: var(--light-gray-70);
+}
+
+.profile-not-found {
+  display: none;
+  background: var(--onyx);
+  border: 1px solid var(--jet);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--white-1);
+  font-size: var(--fs-6);
+  margin: 0 0 12px;
+}
+
+.profile-not-found.is-visible {
+  display: block;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
 .staff-directory {
   padding: 6px 0 0;
 }

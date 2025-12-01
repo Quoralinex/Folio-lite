@@ -11,10 +11,10 @@ A multi-profile staff directory built on the Folio-lite template. Profiles are r
 - Brand-forward Quoralinex theme and refreshed imagery.
 
 ## Editing content
-1. Update or add teammates in `assets/data/employees.json`.
+1. Update or add teammates in the Quoralinex portal directory UI; the site now fetches `https://portal.quoralinex.com/directory-api/employees` on load.
    - Each entry includes contact info, socials, about copy, services, resume, skills, portfolio, blog posts, and media paths.
 2. Add/remove dedicated profile entry pages by copying one of the lightweight `*.html` redirect stubs and updating the slug.
-3. Place new brand-approved imagery in `assets/images/` and reference it from the JSON.
+3. Place new brand-approved imagery in `assets/images/` and reference it from the directory data.
 
 ## Cloudflare Pages checklist
 - **Routing:** The query parameter `?employee=<slug>` resolves profiles; lightweight HTML stubs are provided for direct paths (e.g., `/alicejones.html`). If you prefer extensionless URLs, deploy with the `_redirects` file (e.g., `/alicejones` → `/index.html?employee=alicejones`).

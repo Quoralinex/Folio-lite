@@ -9,7 +9,7 @@
   <main class="admin-layout">
     <section class="sidebar">
       <h1>Staff Admin</h1>
-      <button id="load-data-btn">Load employees.json</button>
+      <button id="load-data-btn">Load live directory</button>
       <select id="employee-select">
         <option value="">— New employee —</option>
       </select>
@@ -57,10 +57,11 @@
       </form>
 
       <section class="output">
-        <h2>employees.json preview</h2>
+        <h2>Directory preview</h2>
         <textarea id="json-output" readonly></textarea>
         <p class="hint">
-          Copy this JSON and paste it into <code>assets/data/employees.json</code> in GitHub.
+          Data loads directly from the directory API. Edit profiles in the portal and reload to
+          see updates reflected here.
         </p>
       </section>
     </section>

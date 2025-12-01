@@ -100,6 +100,7 @@
         <div class="staff-directory">
           <h3 class="h3">Staff Profiles</h3>
           <p class="directory-help">Click any teammate or let the panel auto-rotate.</p>
+          <p class="directory-status" id="directory-status" role="status" aria-live="polite" aria-hidden="true"></p>
           <ul class="directory-list" id="staff-directory"></ul>
         </div>
       </div>
@@ -107,6 +108,9 @@
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
+      <div id="profile-status" class="status-banner" role="status" aria-live="polite" aria-hidden="true"></div>
+      <div id="profile-not-found" class="profile-not-found is-hidden" role="alert">Profile not found.</div>
+      <div id="profile-content">
       <nav class="navbar">
         <ul class="navbar-list">
           <li class="navbar-item"><button class="navbar-link active" data-nav-link>About</button></li>
@@ -241,6 +245,7 @@
           </form>
         </section>
       </article>
+      </div>
     </div>
   </main>
 

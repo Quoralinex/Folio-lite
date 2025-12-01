@@ -1,14 +1,90 @@
 'use strict';
 
+/**
+ * @typedef {Object} Employee
+ * @property {string} slug
+ * @property {string} name
+ * @property {string} role
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} birthday
+ * @property {string} location
+ * @property {string} avatar
+ * @property {Object<string, string>} socials
+ * @property {{ intro?: string, detail?: string }} about
+ * @property {Array<Object>} services
+ * @property {Array<Object>} testimonials
+ * @property {Array<Object>} clients
+ * @property {Array<Object>} experience
+ * @property {Array<Object>} education
+ * @property {Array<Object>} skills
+ * @property {Array<Object>} portfolio
+ * @property {Array<Object>} blog
+ */
+
+/**
+ * @typedef {{ staff: Employee[] }} EmployeeDirectory
+ */
+
+const DIRECTORY_API_URL = 'https://portal.quoralinex.com/directory-api/employees';
+
 const state = {
   employees: [],
-  currentIndex: 0,
+  currentIndex: -1,
   autoTimer: null,
   rotationMs: 12000,
 };
 
 const qs = (selector) => document.querySelector(selector);
 const qsa = (selector) => Array.from(document.querySelectorAll(selector));
+
+const directoryStatus = qs('#directory-status');
+const profileStatus = qs('#profile-status');
+const profileContent = qs('#profile-content');
+const profileNotFound = qs('#profile-not-found');
+
+const setStatus = (element, message, tone = 'info') => {
+  if (!element) return;
+  element.textContent = message || '';
+  element.classList.remove('is-error', 'is-info', 'is-visible');
+  element.setAttribute('aria-hidden', 'true');
+  if (message) {
+    element.classList.add('is-visible');
+    element.classList.add(tone === 'error' ? 'is-error' : 'is-info');
+    element.setAttribute('aria-hidden', 'false');
+  }
+};
+
+const toggleProfileContent = (show) => {
+  if (!profileContent) return;
+  profileContent.classList.toggle('is-hidden', !show);
+};
+
+const normalizeEmployees = (entries) =>
+  (entries || [])
+    .filter(
+      (emp) =>
+        emp &&
+        typeof emp.slug === 'string' &&
+        emp.slug.trim() &&
+        typeof emp.name === 'string' &&
+        emp.name.trim()
+    )
+    .map((emp) => Object.assign({}, emp, { slug: emp.slug.trim().toLowerCase() }));
+
+const showNotFound = (slug) => {
+  toggleProfileContent(false);
+  if (!profileNotFound) return;
+  profileNotFound.textContent = slug
+    ? 'Profile not found for "' + slug + '". Please choose another teammate.'
+    : 'Profile not found.';
+  profileNotFound.classList.add('is-visible');
+};
+
+const hideNotFound = () => {
+  if (!profileNotFound) return;
+  profileNotFound.classList.remove('is-visible');
+};
 
 const elementToggleFunc = function (elem) { elem.classList.toggle('active'); };
 
@@ -404,7 +480,7 @@ const renderPortfolio = (employee) => {
   projectList.innerHTML = '';
 
   const categories = Array.from(
-    new Set((employee.portfolio || []).map((p) => p.category.toLowerCase()))
+    new Set((employee.portfolio || []).map((p) => (p.category || 'misc').toLowerCase()))
   );
   const allCategories = ['all'].concat(categories);
 
@@ -438,7 +514,7 @@ const renderPortfolio = (employee) => {
     const li = document.createElement('li');
     li.className = 'project-item active';
     li.dataset.filterItem = '';
-    li.dataset.category = project.category.toLowerCase();
+    li.dataset.category = (project.category || 'misc').toLowerCase();
     li.innerHTML =
       '<a href="' +
       project.url +
@@ -524,6 +600,13 @@ const renderStaffDirectory = () => {
   const list = qs('#staff-directory');
   if (!list) return;
   list.innerHTML = '';
+
+  if (!state.employees.length) {
+    setStatus(directoryStatus, 'No staff to display yet.', 'info');
+    return;
+  }
+
+  setStatus(directoryStatus, '', 'info');
 
   state.employees.forEach((employee, index) => {
     const li = document.createElement('li');
@@ -618,11 +701,24 @@ const resolveSlug = () => {
 };
 
 const setActiveEmployee = (slug, manual = false) => {
+  if (!state.employees.length) return;
+
   const index = state.employees.findIndex((e) => e.slug === slug);
-  state.currentIndex = index >= 0 ? index : 0;
+  if (index === -1) {
+    state.currentIndex = -1;
+    setStatus(profileStatus, 'Profile not found.', 'error');
+    showNotFound(slug);
+    return;
+  }
+
+  hideNotFound();
+  state.currentIndex = index;
   const employee = state.employees[state.currentIndex];
+
   if (!employee) return;
 
+  setStatus(profileStatus, '', 'info');
+  toggleProfileContent(true);
   renderProfile(employee);
   renderStaffDirectory();
 
@@ -636,7 +732,9 @@ const setActiveEmployee = (slug, manual = false) => {
 
 const nextEmployee = () => {
   if (!state.employees.length) return;
-  const nextIndex = (state.currentIndex + 1) % state.employees.length;
+  const nextIndex = state.currentIndex >= 0
+    ? (state.currentIndex + 1) % state.employees.length
+    : 0;
   setActiveEmployee(state.employees[nextIndex].slug, false);
 };
 
@@ -645,34 +743,61 @@ const restartRotation = () => {
   if (!state.employees.length) return;
   state.autoTimer = setInterval(nextEmployee, state.rotationMs);
 };
+/* --------- Directory load using fetch ------------------------ */
 
-/* --------- Directory load using XHR (no fetch) --------------- */
+const loadDirectory = async (attempt = 1) => {
+  setStatus(directoryStatus, 'Loading staff directory…', 'info');
+  setStatus(profileStatus, 'Loading staff directory…', 'info');
+  toggleProfileContent(false);
 
-const loadDirectory = () => {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', './assets/data/employees.json', true);
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState !== 4) return;
-
-    if (xhr.status >= 200 && xhr.status < 300) {
-      try {
-        const data = JSON.parse(xhr.responseText);
-        state.employees = (data && data.staff) || [];
-      } catch (e) {
-        console.error('Failed to parse employee directory', e);
-        state.employees = [];
-      }
-    } else {
-      console.error('Failed to load employee directory HTTP ' + xhr.status);
-      state.employees = [];
+  try {
+    const res = await fetch(DIRECTORY_API_URL, { cache: 'no-cache' });
+    if (!res.ok) {
+      throw new Error('Directory API error HTTP ' + res.status);
     }
+
+    /** @type {EmployeeDirectory | Employee[] | null} */
+    const directory = await res.json();
+    const staff = Array.isArray(directory)
+      ? directory
+      : (directory && Array.isArray(directory.staff) ? directory.staff : []);
+
+    if (!Array.isArray(staff) || !staff.length) {
+      throw new Error('Directory response missing staff');
+    }
+
+    const normalized = normalizeEmployees(staff);
+
+    if (!normalized.length) {
+      throw new Error('No valid employees after normalization');
+    }
+
+    state.employees = normalized;
+    renderStaffDirectory();
+    setStatus(directoryStatus, '', 'info');
+    setStatus(profileStatus, '', 'info');
+    toggleProfileContent(true);
+    hideNotFound();
 
     setActiveEmployee(resolveSlug());
     restartRotation();
-  };
+  } catch (error) {
+    console.error('Failed to load employee directory', error);
+    if (attempt < 2) {
+      setStatus(directoryStatus, 'Loading staff directory… retrying.', 'info');
+      setStatus(profileStatus, 'Retrying directory request…', 'info');
+      return loadDirectory(attempt + 1);
+    }
 
-  xhr.send();
+    state.employees = [];
+    state.currentIndex = -1;
+    renderStaffDirectory();
+    if (state.autoTimer) clearInterval(state.autoTimer);
+    toggleProfileContent(false);
+    showNotFound();
+    setStatus(directoryStatus, 'Staff directory temporarily unavailable.', 'error');
+    setStatus(profileStatus, 'Staff directory temporarily unavailable.', 'error');
+  }
 };
 
 loadDirectory();
