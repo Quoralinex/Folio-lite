@@ -372,7 +372,7 @@ main {
 
 .sidebar {
   margin-bottom: 15px;
-  max-height: 112px;
+  max-height: 150px;
   overflow: hidden;
   transition: var(--transition-2);
 }
@@ -407,6 +407,7 @@ main {
   white-space: normal;
   word-break: break-word;
   hyphens: auto;
+  line-height: 1.2;
 }
 
 .profile-name.long-name { font-size: calc(var(--fs-3) - 2px); }
@@ -1307,6 +1308,8 @@ textarea.form-input::-webkit-resizer { display: none; }
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .profile-name.long-name { font-size: calc(var(--fs-3) - 3px); }
 
   .info-content { width: 100%; }
 }
