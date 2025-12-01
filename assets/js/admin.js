@@ -1,5 +1,7 @@
 'use strict';
 
+const DIRECTORY_API_URL = 'https://portal.quoralinex.com/directory-api/employees';
+
 let staff = [];
 
 const $ = (sel) => document.querySelector(sel);
@@ -10,16 +12,16 @@ const form = $('#employee-form');
 const output = $('#json-output');
 
 loadBtn.addEventListener('click', function () {
-  fetch('assets/data/employees.json?_=' + Date.now())
+  fetch(DIRECTORY_API_URL + '?_=' + Date.now())
     .then((res) => res.json())
     .then((data) => {
-      staff = data.staff || [];
+      staff = Array.isArray(data) ? data : (data.staff || []);
       renderSelect();
       updateOutput();
     })
     .catch((err) => {
-      console.error('Failed to load employees.json', err);
-      alert('Failed to load employees.json – check console.');
+      console.error('Failed to load directory API', err);
+      alert('Failed to load the live directory – check console.');
     });
 });
 
@@ -85,7 +87,7 @@ form.addEventListener('submit', function (e) {
   renderSelect();
   updateOutput();
 
-  alert('Updated in memory. Copy JSON from the preview and commit it.');
+  alert('Updated in memory. Save changes in the portal to persist them.');
 });
 
 const updateOutput = () => {
