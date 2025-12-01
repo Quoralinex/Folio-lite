@@ -11,6 +11,27 @@
   <!-- favicon -->
   <link rel="shortcut icon" href="./assets/images/q1x_favicon_32x32.png" type="image/x-icon">
 
+  <script>
+    (() => {
+      const themes = { light: 'light', dark: 'dark' };
+      const params = new URLSearchParams(window.location.search);
+      const queryTheme = params.get('theme');
+      let storedTheme = null;
+
+      try {
+        storedTheme = localStorage.getItem('foliolite-theme');
+      } catch (error) {
+        storedTheme = null;
+      }
+
+      const resolvedTheme =
+        (queryTheme && themes[queryTheme]) || (storedTheme && themes[storedTheme]) || 'light';
+
+      document.documentElement.dataset.theme = resolvedTheme;
+      document.documentElement.style.setProperty('color-scheme', resolvedTheme);
+    })();
+  </script>
+
   <!-- custom css link -->
   <link rel="stylesheet" href="./assets/css/style.css">
 
@@ -21,6 +42,16 @@
 </head>
 
 <body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-title">Quoralinex People</div>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">
+        <ion-icon class="theme-icon icon-moon" name="moon-outline" aria-hidden="true"></ion-icon>
+        <ion-icon class="theme-icon icon-sun" name="sunny-outline" aria-hidden="true"></ion-icon>
+        <span class="theme-toggle-label" data-theme-toggle-text>Dark theme</span>
+      </button>
+    </div>
+  </header>
   <main>
     <!-- SIDEBAR -->
     <aside class="sidebar" data-sidebar>
