@@ -42,6 +42,94 @@ const directoryStatus = qs('#directory-status');
 const profileStatus = qs('#profile-status');
 const profileContent = qs('#profile-content');
 const profileNotFound = qs('#profile-not-found');
+const themeToggleBtn = qs('[data-theme-toggle]');
+const themeToggleText = qs('[data-theme-toggle-text]');
+
+const THEME_STORAGE_KEY = 'foliolite-theme';
+const prefersDarkQuery =
+  typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(prefers-color-scheme: dark)')
+    : null;
+let hasStoredTheme = false;
+
+const setTurnstileTheme = (theme) => {
+  qsa('.cf-turnstile').forEach((widget) => {
+    widget.setAttribute('data-theme', theme);
+  });
+};
+
+const persistTheme = (theme) => {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    hasStoredTheme = true;
+  } catch (error) {
+    /* no-op */
+  }
+};
+
+const applyTheme = (theme, persist = false) => {
+  const normalized = theme === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = normalized;
+  document.documentElement.style.setProperty('color-scheme', normalized);
+
+  if (persist) {
+    persistTheme(normalized);
+  }
+
+  if (themeToggleText) {
+    themeToggleText.textContent = normalized === 'light' ? 'Light theme' : 'Dark theme';
+  }
+  if (themeToggleBtn) {
+    themeToggleBtn.setAttribute(
+      'aria-label',
+      normalized === 'light' ? 'Switch to dark theme' : 'Switch to light theme'
+    );
+  }
+
+  setTurnstileTheme(normalized);
+};
+
+const readStoredTheme = () => {
+  try {
+    return localStorage.getItem(THEME_STORAGE_KEY);
+  } catch (error) {
+    return null;
+  }
+};
+
+const initTheme = () => {
+  const params = new URLSearchParams(window.location.search || '');
+  const queryTheme = params.get('theme');
+  const hasQueryTheme = queryTheme === 'light' || queryTheme === 'dark';
+  const storedTheme = readStoredTheme();
+
+  hasStoredTheme = Boolean(storedTheme) || hasQueryTheme;
+
+  const currentTheme =
+    (hasQueryTheme ? queryTheme : null) ||
+    storedTheme ||
+    document.documentElement.dataset.theme ||
+    'light';
+
+  applyTheme(currentTheme, Boolean(storedTheme));
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+      applyTheme(nextTheme, true);
+    });
+  }
+
+  if (prefersDarkQuery) {
+    prefersDarkQuery.addEventListener('change', (event) => {
+      if (!hasStoredTheme) {
+        applyTheme(event.matches ? 'dark' : 'light', false);
+      }
+    });
+  }
+};
+
+initTheme();
 
 const setStatus = (element, message, tone = 'info') => {
   if (!element) return;

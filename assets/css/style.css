@@ -15,7 +15,10 @@
   #CUSTOM PROPERTY
 \*-----------------------------------*/
 
-:root {
+:root { color-scheme: light; }
+
+:root,
+:root[data-theme="dark"] {
 
   /**
    * colors
@@ -70,6 +73,7 @@
   --light-gray: #c9d4e5;
   --light-gray-70: rgba(201, 212, 229, 0.7);
   --bittersweet-shimmer: #f199ff;
+  --navbar-bg: hsla(240, 1%, 17%, 0.75);
 
   /**
    * typography
@@ -97,7 +101,7 @@
   /**
    * shadow
    */
-  
+
   --shadow-1: -4px 8px 24px hsla(0, 0%, 0%, 0.25);
   --shadow-2: 0 16px 30px hsla(0, 0%, 0%, 0.25);
   --shadow-3: 0 16px 40px hsla(0, 0%, 0%, 0.25);
@@ -111,6 +115,59 @@
   --transition-1: 0.25s ease;
   --transition-2: 0.5s ease-in-out;
 
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-gradient-onyx: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f5f7fb 50%,
+    #eef3ff 100%
+  );
+  --bg-gradient-jet: linear-gradient(
+    135deg,
+    rgba(99, 129, 255, 0.08) 0%,
+    rgba(82, 229, 255, 0.08) 100%
+  ), #f3f7ff;
+  --bg-gradient-yellow-1: linear-gradient(
+    135deg,
+    #7a5bff 0%,
+    rgba(82, 229, 255, 0.35) 70%
+  );
+  --bg-gradient-yellow-2: linear-gradient(
+    135deg,
+    rgba(82, 229, 255, 0.35) 0%,
+    rgba(122, 91, 255, 0.15) 60%
+  ), #eef4ff;
+  --border-gradient-onyx: linear-gradient(
+    135deg,
+    rgba(122, 91, 255, 0.4) 0%,
+    rgba(82, 229, 255, 0.35) 50%,
+    rgba(82, 229, 255, 0.2) 100%
+  );
+  --text-gradient-yellow: linear-gradient(to right, #3fa3c6, #6a4fe0);
+
+  --jet: #d6e0ef;
+  --onyx: #e8eef7;
+  --eerie-black-1: #f3f6fd;
+  --eerie-black-2: #ffffff;
+  --smoky-black: #f5f7fb;
+  --white-1: #0f1b2f;
+  --white-2: #1b2d45;
+  --orange-yellow-crayola: #3ec8ea;
+  --vegas-gold: #5c7da6;
+  --light-gray: #445c77;
+  --light-gray-70: rgba(68, 92, 119, 0.7);
+  --bittersweet-shimmer: #c36ee0;
+  --navbar-bg: rgba(255, 255, 255, 0.9);
+
+  --shadow-1: 0 12px 28px rgba(15, 27, 47, 0.08);
+  --shadow-2: 0 16px 32px rgba(15, 27, 47, 0.12);
+  --shadow-3: 0 20px 40px rgba(15, 27, 47, 0.12);
+  --shadow-4: 0 25px 50px rgba(15, 27, 47, 0.1);
+  --shadow-5: 0 30px 70px rgba(15, 27, 47, 0.12);
 }
 
 
@@ -158,6 +215,64 @@ input, textarea {
 html { font-family: var(--ff-poppins); }
 
 body { background: var(--smoky-black); }
+
+.site-header {
+  position: sticky;
+  top: 0;
+  padding: 12px 12px 0;
+  z-index: 6;
+  background: var(--smoky-black);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--eerie-black-2);
+  border: 1px solid var(--jet);
+  border-radius: 14px;
+  box-shadow: var(--shadow-1);
+}
+
+.site-title {
+  color: var(--white-2);
+  font-weight: var(--fw-600);
+  letter-spacing: -0.15px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--jet);
+  background: var(--bg-gradient-jet);
+  color: var(--white-1);
+  font-weight: var(--fw-500);
+  box-shadow: var(--shadow-2);
+  transition: var(--transition-1);
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus {
+  border-color: var(--orange-yellow-crayola);
+  color: var(--orange-yellow-crayola);
+}
+
+.theme-toggle-label { font-size: var(--fs-7); }
+
+.theme-icon { font-size: 18px; }
+
+.icon-sun { display: none; }
+
+:root[data-theme="light"] .icon-sun { display: block; }
+
+:root[data-theme="light"] .icon-moon { display: none; }
 
 
 
@@ -574,7 +689,7 @@ main {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: hsla(240, 1%, 17%, 0.75);
+  background: var(--navbar-bg);
   backdrop-filter: blur(10px);
   border: 1px solid var(--jet);
   border-radius: 12px 12px 0 0;
@@ -1925,6 +2040,16 @@ textarea.form-input::-webkit-resizer { display: none; }
   body::-webkit-scrollbar-thumb:hover { background: hsla(0, 0%, 100%, 0.15); }
 
   body::-webkit-scrollbar-button { height: 60px; }
+
+  :root[data-theme="light"] body::-webkit-scrollbar-thumb {
+    background: rgba(15, 27, 47, 0.18);
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.55),
+                inset -1px -1px 0 rgba(255, 255, 255, 0.55);
+  }
+
+  :root[data-theme="light"] body::-webkit-scrollbar-thumb:hover {
+    background: rgba(15, 27, 47, 0.28);
+  }
 
 
 
