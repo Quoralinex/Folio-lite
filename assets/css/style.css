@@ -514,9 +514,23 @@ article.active {
 \*-----------------------------------*/
 
 main {
-  margin: 15px 12px;
-  margin-bottom: 75px;
+  padding: 15px 12px 75px;
   min-width: 259px;
+}
+
+.layout-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.main-content {
+  width: 100%;
+  min-width: 0;
 }
 
 
@@ -1924,7 +1938,7 @@ textarea.form-input::-webkit-resizer { display: none; }
    */
 
   .sidebar, article {
-    width: 950px;
+    width: 100%;
     box-shadow: var(--shadow-5);
   }
 
@@ -1934,12 +1948,17 @@ textarea.form-input::-webkit-resizer { display: none; }
    * MAIN 
    */
 
-  main { margin-bottom: 60px; }
+  main { padding-bottom: 90px; }
+
+  .layout-shell {
+    grid-template-columns: minmax(320px, 360px) minmax(0, 1fr);
+    gap: 24px;
+  }
 
   .main-content {
     position: relative;
-    width: max-content;
-    margin: auto;
+    width: 100%;
+    margin: 0;
   }
 
 
@@ -2052,7 +2071,7 @@ textarea.form-input::-webkit-resizer { display: none; }
    * REUSED STYLE
    */
 
-  .sidebar, article { width: auto; }
+  .sidebar, article { width: 100%; }
 
   article { min-height: 100%; }
 
@@ -2063,17 +2082,18 @@ textarea.form-input::-webkit-resizer { display: none; }
    */
 
   main {
-    max-width: 1200px;
-    margin-inline: auto;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    gap: 25px;
+    padding: 25px 12px 100px;
+  }
+
+  .layout-shell {
+    max-width: 1220px;
+    grid-template-columns: minmax(360px, 380px) minmax(0, 1fr);
+    gap: 28px;
   }
 
   .main-content {
-    min-width: 75%;
-    width: 75%;
+    min-width: 0;
+    width: 100%;
     margin: 0;
   }
 
